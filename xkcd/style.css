@@ -27,6 +27,10 @@ body {
     padding: 5px 10px;
 }
 
+#xkcd-header button:focus {
+    outline: 0;
+}
+
 #xkcd-header button:hover {
     background-color: #758cb6;
 }
