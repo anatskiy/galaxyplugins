@@ -26,7 +26,7 @@ $(document).ready(function() {
                 randomId = Math.floor(Math.random() * this.latestXkcdId) + 1;
 
             $.getJSON("http://dynamic.xkcd.com/api-0/jsonp/comic/" + randomId + "?callback=?", function(data) {
-                me.xkcd = {img: data.img, alt: data.alt, title: data.title, id: data.num};
+                me.xkcd = {img: data.img, alt: data.alt, title: data.title};
                 me.render();
             });
         },
