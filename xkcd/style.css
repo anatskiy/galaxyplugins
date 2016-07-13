@@ -1,0 +1,48 @@
+body {
+    background: #eee;
+}
+
+#xkcdapp {
+    border: 1px solid #96a8c8;
+    text-align: center;
+    margin: 30px auto 0;
+    width: 700px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#xkcd-header {
+    background: #96a8c8;
+    border-bottom: 1px solid #96a8c8;
+    padding: 15px 0;
+}
+
+#xkcd-header button {
+    color: #fff;
+    font-size: 14px;
+    background-color: #859abf;
+    border: none;
+    border-radius: 7px;
+    box-shadow: 0 5px #647eae;
+    padding: 5px 10px;
+}
+
+#xkcd-header button:hover {
+    background-color: #758cb6;
+}
+
+#xkcd-header button:active {
+    background-color: #758cb6;
+    box-shadow: 0 0 #647eae;
+    transform: translateY(5px);
+}
+
+#xkcd-img {
+    background: #fff;
+}
+
+#xkcd-img img {
+    padding: 10px;
+    max-width: 680px;
+    margin-bottom: -4px;
+}
