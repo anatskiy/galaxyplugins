@@ -1,0 +1,52 @@
+body {
+    background: #eee;
+}
+
+#phdcomicsapp {
+    border: 1px solid #52697d;
+    text-align: center;
+    margin: 30px auto 0;
+    width: 700px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#phdcomics-header {
+    background: #52697d;
+    border-bottom: 1px solid #52697d;
+    padding: 15px 0;
+}
+
+#phdcomics-header button {
+    color: #fff;
+    font-size: 14px;
+    background-color: #768fa5;
+    border: none;
+    border-radius: 7px;
+    box-shadow: 0 5px #5c768c;
+    padding: 5px 10px;
+}
+
+#phdcomics-header button:focus {
+    outline: 0;
+}
+
+#phdcomics-header button:hover {
+    background-color: #67839b;
+}
+
+#phdcomics-header button:active {
+    background-color: #67839b;
+    box-shadow: 0 0 #5c768c;
+    transform: translateY(5px);
+}
+
+#phdcomics-img {
+    background: #fff;
+}
+
+#phdcomics-img img {
+    padding: 10px;
+    max-width: 680px;
+    margin-bottom: -4px;
+}
