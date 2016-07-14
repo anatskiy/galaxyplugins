@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
-
 from bs4 import BeautifulSoup
+
 import urllib2
 import re
 from random import randint
