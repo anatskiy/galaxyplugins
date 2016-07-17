@@ -122,8 +122,7 @@ $(function () {
         emptyTemplate: _.template($('#rssfeedlist-empty-template').html()),
 
         events: {
-            'click #showSettingsBtn': 'onShowSettingsBtnClick',
-            'click #addFeedBtn': 'onAddFeedBtnClick'
+            'click #showSettingsBtn': 'onShowSettingsBtnClick'
         },
 
         initialize: function () {
