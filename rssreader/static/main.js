@@ -65,7 +65,7 @@ $(function () {
         renderTab: function (index, numTotal) {
             this.rssfeeds.append(this.tabTemplate(this.model.toJSON()));
 
-            // Only after all items have been added to the DOM,
+            // Only after all tabs have been added to DOM,
             // initialize jQuery UI's tabs
             if (index == numTotal - 1) this.rssfeeds.tabs();
         },
@@ -128,7 +128,6 @@ $(function () {
         initialize: function () {
             this.rssfeeds = $('#rssfeeds');
             this.rssfeedList = $('#rssfeed-list');
-            this.settingsView = RSSReaderSettings;
 
             RSSFeeds.fetch();
             this.render();
@@ -148,8 +147,8 @@ $(function () {
             this.rssfeedList.append(view.render().el);
             view.renderTab(index, RSSFeeds.length);
 
-            if (this.settingsView.settings.length) {
-                this.settingsView.trigger('addFeedListItem', feed);
+            if (RSSReaderSettings.settings.length) {
+                RSSReaderSettings.trigger('addFeedListItem', feed);
             }
         },
 
