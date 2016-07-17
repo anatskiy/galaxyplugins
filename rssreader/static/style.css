@@ -157,7 +157,7 @@ div[id^="rssfeedtab-"] .feednews:last-child {
     border: 1px solid #DDDDDD;
     border-radius: 4px;
     padding: 5px;
-    width: 330px;
+    width: 280px;
     outline: none;
     -webkit-transition: all 0.30s ease-in-out;
     -moz-transition: all 0.30s ease-in-out;
@@ -170,4 +170,21 @@ div[id^="rssfeedtab-"] .feednews:last-child {
 
 #rssreader-settings input::-webkit-input-placeholder {
     text-align: center;
+}
+
+#rssreader-settings-feedlist {
+    padding-left: 20px;
+}
+
+#rssreader-settings-feedlist li {
+    margin-bottom: 10px;
+}
+
+#rssreader-settings-feedlist li a {
+    float: right;
+    text-decoration: none;
+}
+
+#rssreader-settings-feedlist li a:hover {
+    text-decoration: underline;
 }

@@ -10,25 +10,31 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <!-- Templates -->
+    <script type="text/template" id="rssreader-settings-feedlist-item-template">
+        <li><%= title %> <a class="delete-feed" feed-id="<%= id %>" href="#">Delete</a>
+        </li>
+    </script>
+
     <script type="text/template" id="rssfeed-template">
         <a href="#rssfeedtab-<%= id %>"><%= title %></a>
     </script>
 
     <script type="text/template" id="rssfeedtab-template">
-        <div id="rssfeedtab-<%= id %>">
+        <div id="rssfeedtab-<%= id %>"></div>
+    </script>
+
+    <script type="text/template" id="rssfeednews-template">
             <% _.each(news, function(news_single) { %>
-            <div class="feednews">
-                <div class="feednews-title">
-                    <a href="<%= news_single.url %>"
-                       target="_blank"><%= news_single.title %></a>
-                </div>
-                <div class="feednews-description">
-                    <p><%= news_single.description %></p>
-                    <!--<%= news_single.description %>-->
-                </div>
+        <div class="feednews">
+            <div class="feednews-title">
+                <a href="<%= news_single.url %>"
+                   target="_blank"><%= news_single.title %></a>
             </div>
-            <% }); %>
+            <div class="feednews-description">
+                <p><%= news_single.description %></p>
+            </div>
         </div>
+            <% }); %>
     </script>
 
     <script type="text/template" id="rssfeedlist-empty-template">
@@ -43,9 +49,11 @@
         <div class="rssreader-title">
             <h3>RSS/Atom Reader</h3>
         </div>
+
         {% if show_settings %}
         <div class="rssreader-control">
             <button id="showSettingsBtn">Settings</button>
+
             <div id="rssreader-settings" title="Settings">
                 <div>
                     <input type="text" id="feedUrl" placeholder="URL"
@@ -55,25 +63,24 @@
                 </div>
                 <div>
                     <h4>List of feeds:</h4>
-                    <ol>
-                        <li>Feed 1 <a href="#">Delete</a></li>
-                        <li>Feed 2 <a href="#">Delete</a></li>
-                        <li>Feed 3 <a href="#">Delete</a></li>
-                    </ol>
+                    <ol id="rssreader-settings-feedlist"></ol>
                 </div>
+                </div>
+
             </div>
-        </div>
         {% endif %}
-        </div>
+    </div>
+
     <div id="rssfeeds">
         <ul id="rssfeed-list"></ul>
-        </div>
+    </div>
+
     <div id="rssreader-overlay">
         <div class="rssreader-overlay-loading">
             <p>Loading...</p>
         </div>
-        </div>
     </div>
+</div>
 
 <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>

@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
 
     var RSSNews = Backbone.Model.extend({
         defaults: {
@@ -21,13 +21,14 @@ $(document).ready(function () {
 
         initialize: function () {
             var me = this;
-
             this.news = new RSSNewsList;
             this.news.fetch(
                 {
                     data: {feed_url: me.get('url')},
                     type: 'POST',
-                    async: false
+                    success: function () {
+                        me.trigger('change');
+                    }
                 }
             );
         }
@@ -46,11 +47,14 @@ $(document).ready(function () {
 
         template: _.template($('#rssfeed-template').html()),
         tabTemplate: _.template($('#rssfeedtab-template').html()),
+        newsTemplate: _.template($('#rssfeednews-template').html()),
 
         events: {},
 
         initialize: function () {
+            this.rssfeeds = $('#rssfeeds');
             this.listenTo(this.model, 'destroy', this.remove);
+            this.listenTo(this.model, 'change', this.renderNews);
         },
 
         render: function () {
@@ -58,16 +62,59 @@ $(document).ready(function () {
             return this;
         },
 
-        renderTab: function (rssfeeds, index, numTotal) {
-            var content = this.model.toJSON();
-            content.news = this.model.news.toJSON();
-            rssfeeds.append(this.tabTemplate(content));
+        renderTab: function (index, numTotal) {
+            this.rssfeeds.append(this.tabTemplate(this.model.toJSON()));
 
             // Only after all items have been added to the DOM,
             // initialize jQuery UI's tabs
-            if (index == numTotal - 1) rssfeeds.tabs();
+            if (index == numTotal - 1) this.rssfeeds.tabs();
+        },
+
+        renderNews: function () {
+            var tab = $('#rssfeedtab-' + this.model.id);
+            tab.append(this.newsTemplate({news: this.model.news.toJSON()}));
         }
     });
+
+    var RSSReaderSettingsView = Backbone.View.extend({
+        el: $('#rssreader-settings'),
+
+        feedListItemTemplate: _.template($('#rssreader-settings-feedlist-item-template').html()),
+
+        events: {
+            'click #addFeedBtn': 'onAddFeedBtnClick'
+        },
+
+        initialize: function () {
+            this.newFeedUrl = $('#feedUrl');
+            this.settingsFeedList = $('#rssreader-settings-feedlist');
+            this.settings = $('#rssreader-settings');
+            this.settings.dialog({
+                autoOpen: false,
+                resizable: false,
+                modal: true,
+                // draggable: false,
+                width: 350
+            });
+
+            this.on('addFeedListItem', this.addFeedListItem);
+        },
+
+        addFeedListItem: function (feed) {
+            this.settingsFeedList.append(this.feedListItemTemplate(feed.toJSON()));
+        },
+
+        onAddFeedBtnClick: function () {
+            var url = this.newFeedUrl.val();
+
+            // TODO: check if a given string is a valid url
+            if (url != '') {
+                // TODO: add new feed
+            }
+        }
+    });
+
+    var RSSReaderSettings = new RSSReaderSettingsView;
 
     var RSSReaderAppView = Backbone.View.extend({
         el: $('#rssreaderapp'),
@@ -75,21 +122,14 @@ $(document).ready(function () {
         emptyTemplate: _.template($('#rssfeedlist-empty-template').html()),
 
         events: {
-            'click #showSettingsBtn': 'onShowSettingsBtnClick'
+            'click #showSettingsBtn': 'onShowSettingsBtnClick',
+            'click #addFeedBtn': 'onAddFeedBtnClick'
         },
 
         initialize: function () {
             this.rssfeeds = $('#rssfeeds');
             this.rssfeedList = $('#rssfeed-list');
-
-            this.settings = $('#rssreader-settings');
-            this.settings.dialog({
-                autoOpen: false,
-                resizable: false,
-                modal: true,
-                // draggable: false,
-                width: 400
-            });
+            this.settingsView = RSSReaderSettings;
 
             RSSFeeds.fetch();
             this.render();
@@ -107,7 +147,11 @@ $(document).ready(function () {
         addOne: function (feed, index) {
             var view = new RSSFeedView({model: feed});
             this.rssfeedList.append(view.render().el);
-            view.renderTab(this.rssfeeds, index, RSSFeeds.length);
+            view.renderTab(index, RSSFeeds.length);
+
+            if (this.settingsView.settings.length) {
+                this.settingsView.trigger('addFeedListItem', feed);
+            }
         },
 
         addAll: function () {
@@ -115,28 +159,16 @@ $(document).ready(function () {
         },
 
         onShowSettingsBtnClick: function () {
-            this.settings.dialog('open');
+            RSSReaderSettings.settings.dialog('open');
         }
     });
 
     var RSSReaderApp = new RSSReaderAppView;
-
-    // Show 'Delete Feed' button on Tab hover
-    // $('#rssfeeds ul[role="tablist"] li').hover(
-    //     function () {
-    //         $(this).find('a').css('padding-right', 5);
-    //         $(this).find('span').css('display', 'block');
-    //     },
-    //     function () {
-    //         $(this).find('a').css('padding-right', 12);
-    //         $(this).find('span').css('display', 'none');
-    //     }
-    // );
 
     // RSSFeeds.fetch();
     // var feed = new RSSFeed({title:'jQuery Plugins', url: 'http://jquery-plugins.net/rss'});
     // // var feed = new RSSFeed({title:'Engadget', url: 'https://www.engadget.com/rss.xml'});
     // RSSFeeds.add(feed);
     // feed.save();
-
+    // debugger;
 });
