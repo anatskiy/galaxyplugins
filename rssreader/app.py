@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 
 import feedparser
+import json
 
 app = Flask(__name__)
 
@@ -20,14 +21,15 @@ def index():
 def get_feed_news():
     url = request.form.get('feed_url')
     feed = feedparser.parse(url)
+    limit = 10
 
     news = [{
                 'title': entry['title'],
                 'url': entry['link'],
                 'description': entry['summary']
-            } for entry in feed['entries'][:10]]
+            } for entry in feed['entries'][:limit]]
 
-    return jsonify(news)
+    return json.dumps(news)
 
 
 if __name__ == '__main__':

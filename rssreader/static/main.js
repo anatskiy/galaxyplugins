@@ -1,24 +1,35 @@
 $(document).ready(function () {
 
-    // var RSSNews = Backbone.Model.extend({
-    //     defaults: {
-    //         title: '',
-    //         url: '',
-    //         description: ''
-    //     }
-    // });
-    //
-    // var RSSNewsList = Backbone.Collection.extend({
-    //     model: RSSNews,
-    //     url: '/get_rssfeed_news/'
-    // });
+    var RSSNews = Backbone.Model.extend({
+        defaults: {
+            title: '',
+            url: '',
+            description: ''
+        }
+    });
+
+    var RSSNewsList = Backbone.Collection.extend({
+        model: RSSNews,
+        url: '/get_rssfeed_news/'
+    });
 
     var RSSFeed = Backbone.Model.extend({
         defaults: {
             title: '',
-            url: '',
-            news: []
-            // news: new RSSNewsList
+            url: ''
+        },
+
+        initialize: function () {
+            var me = this;
+
+            this.news = new RSSNewsList;
+            this.news.fetch(
+                {
+                    data: {feed_url: me.get('url')},
+                    type: 'POST',
+                    async: false
+                }
+            );
         }
     });
 
@@ -40,10 +51,6 @@ $(document).ready(function () {
 
         initialize: function () {
             this.listenTo(this.model, 'destroy', this.remove);
-
-            // this.model.get('news').fetch(
-            //     {data: {feed_url: this.model.get('url')}, type: 'POST'}
-            // );
         },
 
         render: function () {
@@ -52,20 +59,13 @@ $(document).ready(function () {
         },
 
         renderTab: function (rssfeeds, index, numTotal) {
-            var me = this;
-            $.ajax({
-                url: "/get_rssfeed_news/",
-                type: "POST",
-                data: {feed_url: me.model.get('url')},
-                success: function (data) {
-                    me.model.set('news', data);
-                    rssfeeds.append(me.tabTemplate(me.model.toJSON()));
+            var content = this.model.toJSON();
+            content.news = this.model.news.toJSON();
+            rssfeeds.append(this.tabTemplate(content));
 
-                    // Only after all items have been added to the DOM,
-                    // initialize jQuery UI's tabs
-                    if (index == numTotal - 1) rssfeeds.tabs();
-                }
-            });
+            // Only after all items have been added to the DOM,
+            // initialize jQuery UI's tabs
+            if (index == numTotal - 1) rssfeeds.tabs();
         }
     });
 
@@ -97,7 +97,7 @@ $(document).ready(function () {
 
         render: function () {
             if (RSSFeeds.length) {
-                // this.addAll();
+                this.addAll();
             } else {
                 this.rssfeeds.hide();
                 this.$el.append(this.emptyTemplate);
@@ -132,5 +132,11 @@ $(document).ready(function () {
     //         $(this).find('span').css('display', 'none');
     //     }
     // );
+
+    // RSSFeeds.fetch();
+    // var feed = new RSSFeed({title:'jQuery Plugins', url: 'http://jquery-plugins.net/rss'});
+    // // var feed = new RSSFeed({title:'Engadget', url: 'https://www.engadget.com/rss.xml'});
+    // RSSFeeds.add(feed);
+    // feed.save();
 
 });
