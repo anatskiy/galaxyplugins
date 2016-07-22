@@ -110,32 +110,32 @@ body {
     display: none;
 }
 
-div[id^="rssfeedtab-"] .feednews .feednews-title {
+div[id^="ui-id-"] .feednews .feednews-title {
     padding: 10px 0 0;
 }
 
-div[id^="rssfeedtab-"] .feednews .feednews-title a,
-div[id^="rssfeedtab-"] .feednews .feednews-title a:visited {
+div[id^="ui-id-"] .feednews .feednews-title a,
+div[id^="ui-id-"] .feednews .feednews-title a:visited {
     color: #004a99;
     font-weight: bold;
     text-decoration: none;
 }
 
-div[id^="rssfeedtab-"] .feednews .feednews-title a:hover {
+div[id^="ui-id-"] .feednews .feednews-title a:hover {
     text-decoration: underline;
 }
 
-div[id^="rssfeedtab-"] .feednews .feednews-description img {
+div[id^="ui-id-"] .feednews .feednews-description img {
     max-width: 550px;
     padding: 10px;
 }
 
-div[id^="rssfeedtab-"] .feednews {
+div[id^="ui-id-"] .feednews {
     border-bottom: 1px solid #bdbdbd;
     margin-bottom: 10px;
 }
 
-div[id^="rssfeedtab-"] .feednews:last-child {
+div[id^="ui-id-"] .feednews:last-child {
     border-bottom: none;
     margin-bottom: 0;
 }

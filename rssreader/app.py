@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 
 import feedparser
 import json
@@ -17,19 +17,18 @@ def index():
     return render_template('index.html', show_settings=show_settings)
 
 
-@app.route('/get_rssfeed_news/', methods=['POST'])
+@app.route('/get_rssfeed_news/', methods=['GET'])
 def get_feed_news():
-    url = request.form.get('feed_url')
+    url = request.args.get('feed_url')
     feed = feedparser.parse(url)
     limit = 10
+    news = ''
 
-    news = [{
-                'title': entry['title'],
-                'url': entry['link'],
-                'description': entry['summary']
-            } for entry in feed['entries'][:limit]]
+    for entry in feed['entries'][:limit]:
+        news += '<div class="feednews"><div class="feednews-title"><a href="' + entry['link'] + '" target="_blank">' + \
+                entry['title'] + '</a></div><div class="feednews-description"><p>' + entry['summary'] + '</p></div></div>'
 
-    return json.dumps(news)
+    return news
 
 
 if __name__ == '__main__':
