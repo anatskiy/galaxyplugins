@@ -65,18 +65,15 @@ $(function () {
 
             // TODO: check if a given string is a valid url
             if (url != '') {
-                // RSSFeeds.fetch();
-                // var feed = new RSSFeed({
-                //     title:'jQuery Plugins',
-                //     url: 'http://jquery-plugins.net/rss'
-                // });
-                // RSSFeeds.add(feed);
-                // feed.save();
+                RSSFeeds.create({
+                    title:'jQuery Plugins',
+                    url: $.param({u: 'http://jquery-plugins.net/rss'}).replace('u=', '')
+                });
                 // debugger;
 
                 this.newFeedUrl.val('');
                 this.settings.dialog('close');
-                RSSReaderApp.trigger('refresh');
+                RSSReaderApp.trigger('addFeed');
             }
         }
     });
@@ -96,7 +93,7 @@ $(function () {
             this.rssfeeds = $('#rssfeeds');
             this.rssfeedList = $('#rssfeed-list');
 
-            this.on('refresh', this.refresh);
+            this.listenTo(this, 'addFeed', this.addFeed);
 
             RSSFeeds.fetch();
             this.render();
@@ -116,32 +113,47 @@ $(function () {
             this.rssfeedList.append(view.render().el);
 
             // Only after all tabs have been added to DOM, initialize jQuery UI's tabs
-            if (index == RSSFeeds.length - 1) {
-                this.rssfeeds.tabs({
-                    beforeLoad: function(event, ui) {
-                        ui.ajaxSettings.url = '/get_rssfeed_news/?' + $.param({feed_url: feed.toJSON().url});
-                        ui.jqXHR.fail(function() {
-                            ui.panel.html("Couldn't load this feed. Contact the administrator.");
-                        });
-                    }
-                });
-            }
+            if (index == RSSFeeds.length - 1) this.initializeTabs();
 
-            if (RSSReaderSettings.settings.length) {
-                RSSReaderSettings.trigger('addFeedListItem', feed);
-            }
+            if (RSSReaderSettings.settings.length) RSSReaderSettings.trigger('addFeedListItem', feed);
         },
 
         addAll: function () {
             RSSFeeds.each(this.addOne, this);
         },
 
+        addFeed: function() {
+            var content = RSSFeeds.last().toJSON(),
+                tabTemplate = '<li><a href="#{href}">#{title}</a></li>',
+                url = '/get_rssfeed_news/?feed_url=' + content.url,
+                li = $(tabTemplate.replace(/#\{href\}/g, url).replace(/#\{title\}/g, content.title));
+
+            // this.rssfeeds.find('.ui-tabs-nav').append(li);
+            this.rssfeedList.append(li);
+
+            debugger;
+
+            if (RSSFeeds.length == 1) {
+                // When adding very first feed
+                this.initializeTabs();
+            } else {
+                this.rssfeeds.tabs('refresh');
+            }
+        },
+
         onShowSettingsBtnClick: function () {
             RSSReaderSettings.settings.dialog('open');
         },
 
-        refresh: function() {
-            debugger;
+        initializeTabs: function () {
+            this.rssfeeds.tabs({
+                beforeLoad: function(event, ui) {
+                    // ui.ajaxSettings.url = '/get_rssfeed_news/?' + $.param({feed_url: feed.toJSON().url});
+                    ui.jqXHR.fail(function() {
+                        ui.panel.html("Couldn't load this feed. Contact the administrator.");
+                    });
+                }
+            });
         }
     });
 
