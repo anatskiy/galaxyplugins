@@ -131,8 +131,6 @@ $(function () {
             // this.rssfeeds.find('.ui-tabs-nav').append(li);
             this.rssfeedList.append(li);
 
-            debugger;
-
             if (RSSFeeds.length == 1) {
                 // When adding very first feed
                 this.initializeTabs();

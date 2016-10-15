@@ -1,0 +1,120 @@
+#rssreader {
+    font-size: 12px;
+    border: 1px solid #d6b161;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+#rssreader-header {
+    background: #dfe5f9;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    padding: 20px 15px 30px;
+}
+
+#rssreader-header .rssreader-title {
+    float: left;
+}
+
+#rssreader-header .rssreader-title h3 {
+    font-size: 14px;
+    color: #004a99;
+    margin: 0;
+}
+
+#rssreader-empty {
+    background: #dfe5f9;
+    text-align: center;
+    margin-top: -15px;
+    padding: 5px 15px;
+}
+
+#rssreader-loader {
+    border: 5px solid #E0E0E0;
+    border-top: 5px solid #9FA8DA;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    animation: spin 1.5s linear infinite;
+    margin: 10px auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#rssfeeds {
+    clear: both;
+    border: none;
+}
+
+#rssfeeds .ui-widget-header {
+    background: #dfe5f9;
+    border: none;
+    border-bottom: 1px solid #d6b161;
+}
+
+#rssfeeds.ui-tabs.ui-corner-all.ui-widget.ui-widget-content {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/*#rssfeeds .ui-corner-bottom {*/
+/*border-bottom-left-radius: 0;*/
+/*border-bottom-right-radius: 0;*/
+/*}*/
+
+#rssfeeds.ui-tabs {
+    padding: 0;
+}
+
+#rssfeeds ul[role="tablist"] li,
+#rssfeeds ul[role="tablist"] li a {
+    outline: none;
+}
+
+#rssfeeds ul[role="tablist"] li.ui-state-active {
+    background: #7986cb;
+    border: 1px solid #5c6bc0;
+}
+
+#rssfeeds ul[role="tablist"] li span {
+    background-position: -80px -126px;
+    display: none;
+}
+
+div[id^="feed-"] .feednews .feednews-title {
+    padding: 10px 0 0;
+}
+
+div[id^="feed-"] .feednews .feednews-title a,
+div[id^="feed-"] .feednews .feednews-title a:visited {
+    color: #004a99;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+div[id^="feed-"] .feednews .feednews-title a:hover {
+    text-decoration: underline;
+}
+
+div[id^="feed-"] .feednews .feednews-description img {
+    max-width: 550px;
+    padding: 10px;
+}
+
+div[id^="feed-"] .feednews {
+    border-bottom: 1px solid #bdbdbd;
+    margin-bottom: 10px;
+}
+
+div[id^="feed-"] .feednews:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
