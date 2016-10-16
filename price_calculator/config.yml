@@ -13,25 +13,29 @@ providers:
         - class_a_operations: 0.10
         - class_b_operations: 0.01
       controls:
-        - name: storage_size_value
+        - label: Storage Size
+          name: storage_size_value
           units: GB
           start: 50
           min: 1
           max: 100
           step: 1
-        - name: network_egress_value
+        - label: Network Egress
+          name: network_egress_value
           units: GB
           start: 10
           min: 1
           max: 100
           step: 1
-        - name: class_a_operations_value
+        - label: Class A Operations
+          name: class_a_operations_value
           units: operations
           start: 10000
           min: 10000
           max: 1000000
           step: 5000
-        - name: class_b_operations_value
+        - label: Class B Operations
+          name: class_b_operations_value
           units: operations
           start: 10000
           min: 10000

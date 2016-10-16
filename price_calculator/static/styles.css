@@ -13,17 +13,47 @@
 }
 
 #price_calculator-providers select {
+    text-align-last: center;
+    width: 350px;
     margin: 25px 0 10px;
 }
 
+#price_calculator-providers select:focus {
+    outline: none;
+}
+
+.control-container {
+    padding: 10px 0;
+}
+
+.control-label {
+    color: #9e9e9e;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+    margin-top: 45px;
+}
+
+.control-label .label-desc {
+    color: #bdbdbd;
+    font-size: 10px;
+    font-weight: 400;
+    margin-top: 2px;
+    float: right
+}
+
 #price_calculator-controls {
-    width: 300px;
+    width: 350px;
     margin: 0 auto;
 }
 
 #price_calculator-controls .noUi-horizontal {
-    margin: 50px 0 25px;
+    /*margin: 100px 0 50px;*/
     height: 14px;
+}
+
+#price_calculator-controls .noUi-horizontal:first-child {
+    margin-top: 50px;
 }
 
 #price_calculator-controls .noUi-horizontal .noUi-handle {
@@ -40,16 +70,45 @@
 }
 
 #price_calculator-controls .noUi-tooltip {
+    color: #757575;
     font-size: 11px;
     font-weight: bold;
 }
 
+.noUi-marker-horizontal.noUi-marker {
+    width: 1px !important;
+}
+
+.noUi-pips {
+    font-size: 11px;
+}
+
+.noUi-value {
+    margin-top: 10px;
+}
+
 #price_calculator-total-price {
-    margin-bottom: 15px;
+    color: #fff;
+    background: #009688;
+    font-size: 16px;
+    margin: 15px 0 -10px;
+    padding: 5px 0 15px;
+}
+
+.total-price {
+    font-size: 22px;
+    font-weight: 300;
+    margin-left: 5px;
+}
+
+.total-price-currency {
+    color: #b2dfdb;
+    font-weight: 300;
+    margin-left: -5px;
 }
 
 #price_calculator-loader {
-    border: 3px solid #E0F2F1;
+    border: 3px solid #e0f2f1;
     border-top: 3px solid #009688;
     border-radius: 50%;
     width: 25px;

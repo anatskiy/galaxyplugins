@@ -8,20 +8,8 @@ $(document).ready(function() {
     //     href: 'https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.0.0/nouislider.min.css'
     // }).appendTo('head');
 
-    var ProviderModel = Backbone.Model.extend({
-        defaults: {
-            name: '',
-            currency: '',
-            value: '',
-            params: {},
-            controls: [],
-            formula: ''
-        }
-    });
-
     var ProviderCollection = Backbone.Collection.extend({
-        url: 'api/webhooks/price_calculator/get_data',
-        model: ProviderModel
+        url: 'api/webhooks/price_calculator/get_data'
     });
 
     var PriceCalculatorAppView = Backbone.View.extend({
@@ -51,8 +39,13 @@ $(document).ready(function() {
             me.$calculatorTotalPrice = $('#price_calculator-total-price');
             me.$loader = $('#price_calculator-loader');
 
+            // Listen to slider's "change" event
             me.on('sliderchange', me.onSliderChange);
 
+            // Hide Total Price
+            me.$calculatorTotalPrice.hide();
+
+            // Get all information about providers
             me.providerCollection.fetch({
                 success: function(providers) {
                     me.$loader.remove();
@@ -66,7 +59,7 @@ $(document).ready(function() {
 
             // If Provider List is not added to DOM
             if (!me.$providerList) {
-                me.$calculatorProviders.append('<select id="provider-list"></select>');
+                me.$calculatorProviders.append($('<select/>', {id: 'provider-list'}));
                 me.$providerList = $('#provider-list');
             }
 
@@ -80,10 +73,10 @@ $(document).ready(function() {
                 }));
             }, me);
 
-            // Show all controls of a currently selected provider
+            // Render all controls of a currently selected provider
             me.renderControls(providers.models[0]);
 
-            // Show total price
+            // Render total price
             me.renderTotalPrice(providers.models[0]);
 
             return me;
@@ -95,10 +88,23 @@ $(document).ready(function() {
 
             // Iterate over all provider's controls
             _.each(providerModel.controls, function(control) {
-                var $controlContainer = $('<div class="control-container"></div>'),
+                var paramName = control.name.replace('_value', ''),
+                    $controlContainer = $('<div/>', {class: 'control-container'}),
+                    $controlLabel = $('<div/>', {class: 'control-label'})
+                        .append($('<span/>', {text: control.label}))
+                        .append($('<span/>', {
+                            class: 'label-desc',
+                            text:
+                                providerModel.params[paramName] +
+                                ' ' + providerModel.currency + ' per ' +
+                                control.min + ' ' + control.units
+                        })),
                     $control = $('<div/>', {id: control.name});
 
-                me.$calculatorControls.append($control);
+                $controlContainer
+                    .append($control)
+                    .append($controlLabel)
+                    .appendTo(me.$calculatorControls);
 
                 // Initialize noUiSlider's slider
                 noUiSlider.create($control[0], {
@@ -109,6 +115,11 @@ $(document).ready(function() {
                     range: {
                         min: control.min,
                         max: control.max
+                    },
+                    pips: {
+                        mode: 'positions',
+                		values: [0, 100],
+                		density: 5
                     },
                     format: {
                         to: function(value) {
@@ -131,11 +142,12 @@ $(document).ready(function() {
                 providerModel = provider.toJSON(),
                 formula = providerModel.formula;
 
-            //
+            // Replace all param values in the formula
             _.each(providerModel.params, function(value, name) {
                 formula = formula.replace(name, value);
             });
 
+            // // Replace all slider values in the formula
             _.each(providerModel.controls, function(control) {
                 var name = control.name,
                     value = $('#' + name)[0].noUiSlider.get();
@@ -145,17 +157,26 @@ $(document).ready(function() {
             var totalPrice = eval(formula); // jshint ignore:line
 
             me.$calculatorTotalPrice.empty();
-            me.$calculatorTotalPrice.append($('<span/>', {
-                text: 'Total Price: ' + totalPrice.toFixed(2) + ' ' + providerModel.currency
-            }));
+            // me.$calculatorTotalPrice.append($('<p/>', {
+            me.$calculatorTotalPrice.append($(
+                '<p>Total Price: ' +
+                    '<span class="total-price">' + totalPrice.toFixed(2) + '</span> ' +
+                    '<span class="total-price-currency">' + providerModel.currency + '</span>' +
+                '</p>'
+            ));
+
+            // Show Total Price
+            me.$calculatorTotalPrice.show();
         },
 
         onProviderChange: function(e) {
-            var value = e.target.value,
-                provider = this.providerCollection.where({value: value})[0];
+            var providerValue = e.target.value,
+                provider = this.providerCollection.where({value: providerValue})[0];
 
             this.$calculatorControls.empty();
+            this.$calculatorTotalPrice.empty();
             this.renderControls(provider);
+            this.renderTotalPrice(provider);
         },
 
         onSliderChange: function() {
