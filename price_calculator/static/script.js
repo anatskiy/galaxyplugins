@@ -119,7 +119,7 @@ $(document).ready(function() {
                         }
                     }
                 });
-                // $control[0].noUiSlider.on('change', me.onSliderChange);
+
                 $control[0].noUiSlider.on('change', function() {
                     me.trigger('sliderchange');
                 });
