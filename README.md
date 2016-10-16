@@ -1,5 +1,5 @@
 # Galaxy Plugins
-A collection of plugins for Galaxy Project.
+A collection of plugins for [Galaxy Project](https://github.com/galaxyproject/galaxy).
 
 ## List of plugins
 - xkcd - random comics from [xkcd.com](http://xkcd.com/)
