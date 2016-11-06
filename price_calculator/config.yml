@@ -7,48 +7,23 @@ activate: true
 providers:
     - name: Google Cloud Platform
       currency: USD
-      params:
-        - storage_size: 0.026
-        - network_egress: 0.12
-        - class_a_operations: 0.10
-        - class_b_operations: 0.01
-      controls:
-        - label: Storage Size
-          name: storage_size_value
-          units: GB
-          start: 50
-          min: 1
-          max: 100
-          step: 1
-        - label: Network Egress
-          name: network_egress_value
-          units: GB
-          start: 10
-          min: 1
-          max: 100
-          step: 1
-        - label: Class A Operations
-          name: class_a_operations_value
-          units: operations
-          start: 10000
-          min: 10000
-          max: 1000000
-          step: 5000
-        - label: Class B Operations
-          name: class_b_operations_value
-          units: operations
-          start: 10000
-          min: 10000
-          max: 1000000
-          step: 5000
-      formula: >
-        storage_size * storage_size_value +
-        network_egress * network_egress_value +
-        (class_a_operations * class_a_operations_value) / 10000 +
-        (class_b_operations * class_b_operations_value) / 10000
 
-    - name: Amazon S3
-      currency:
       params:
+        - standard_storage: 0.026
+
       controls:
-      formula:
+        - label: Standard Storage
+          name: standard_storage_value
+          tooltip: Amount of standard file storage you need.
+          units: GB
+        #   min: 1
+        #   max: 1024
+
+      formula: >
+        standard_storage * standard_storage_value
+
+    # - name: Amazon S3
+    #   currency:
+    #   params:
+    #   controls:
+    #   formula:
