@@ -135,22 +135,44 @@ $(document).ready(function() {
         },
 
         isValid: function(controls) {
-            var valid = false;
+            var me = this,
+                valid = false;
 
             controls.each(function(control) {
                 var model = control.toJSON(),
                     $item = $('#' + model.name),
+                    $controlContainer = $item.parent().parent(),
                     value = $item.val();
 
                 if (value !== '') {
-                    valid = true;
+                    if (me.isNumber(value)) {
+                        valid = true;
+                    } else {
+                        // Mark invalid (only number is allowed)
+                        $controlContainer.toggleClass('has-error', true);
+                        $controlContainer.append($('<span/>', {
+                            class: 'help-block',
+                            text: 'Only integers and decimals are allowed.'
+                        }));
+                        valid = false;
+                    }
                 } else {
-                    // TODO: mark invalid (cannot be empty)
+                    // Mark invalid (cannot be empty)
+                    $controlContainer.toggleClass('has-error', true);
+                    $controlContainer.append($('<span/>', {
+                        class: 'help-block',
+                        text: 'This field cannot be empty.'
+                    }));
                     valid = false;
                 }
             });
 
             return valid;
+        },
+
+        isNumber: function(value) {
+            var pattern = new RegExp(/^[0-9]+([.,][0-9]+)?$/);
+            return pattern.test(value);
         },
 
         onCalculateBtnClick: function() {
@@ -177,8 +199,18 @@ $(document).ready(function() {
             // // Replace all input values in the formula
             providerModel._controls.each(function(control) {
                 var name = control.attributes.name,
-                    value = parseFloat($('#' + name).val());
+                    $item = $('#' + name),
+                    value = parseFloat($item.val()),
+                    $controlContainer = $item.parent().parent(),
+                    $errorMsg = $controlContainer.children('.help-block');
+
                 formula = formula.replace(name, value);
+
+                // Clear error message
+                $controlContainer.toggleClass('has-error', false);
+                if ($errorMsg) {
+                    $errorMsg.remove();
+                }
             });
 
             var totalPrice = eval(formula);  // jshint ignore:line

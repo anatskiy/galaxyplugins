@@ -43,6 +43,10 @@
     margin-bottom: 15px;
 }
 
+#calculateBtn:focus {
+    outline: none;
+}
+
 #price_calculator-total-price {
     color: #fff;
     background: #009688;

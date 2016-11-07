@@ -9,7 +9,7 @@ providers:
       currency: USD
 
       params:
-        - standard_storage: 0.026
+        - standard_storage_per_gb: 0.026
 
       controls:
         - label: Standard Storage
@@ -20,7 +20,7 @@ providers:
         #   max: 1024
 
       formula: >
-        standard_storage * standard_storage_value
+        standard_storage_per_gb * standard_storage_value
 
     # - name: Amazon S3
     #   currency:
