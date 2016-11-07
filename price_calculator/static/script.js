@@ -31,7 +31,7 @@ $(document).ready(function() {
                         '<input type="text" id="<%= control.attributes.name %>" class="form-control" placeholder="<%= control.attributes.label %>"></input>',
                         '<span class="input-group-addon control-units"><%= control.attributes.units %></span>',
                         '<% if (control.attributes.tooltip) { %>',
-                            '<span class="input-group-addon" data-toggle="tooltip" data-placement="right" title="<%= control.attributes.tooltip %>">?</span>',
+                            '<span class="input-group-addon" data-toggle="tooltip" data-placement="right" data-container="body" title="<%= control.attributes.tooltip %>">?</span>',
                         '<% } %>',
                     '</div>',
                 '</div>',
