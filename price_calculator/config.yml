@@ -1,29 +1,41 @@
 name: price_calculator
 type:
-    - tool
-    - workflow
+  - tool
+  - workflow
 activate: true
 
 providers:
-    - name: Google Cloud Platform
-      currency: USD
+  - name: Google Cloud Platform
+    currency: $
+    params:
+      - storage_per_gb: 0.026
+    controls:
+      - label: Standard Storage
+        name: storage_value
+        tooltip: Amount of standard file storage you need.
+        units: GB
+    formula: >
+      storage_per_gb * storage_value
 
-      params:
-        - standard_storage_per_gb: 0.026
-
-      controls:
-        - label: Standard Storage
-          name: standard_storage_value
-          tooltip: Amount of standard file storage you need.
-          units: GB
-        #   min: 1
-        #   max: 1024
-
-      formula: >
-        standard_storage_per_gb * standard_storage_value
-
-    # - name: Amazon S3
-    #   currency:
-    #   params:
-    #   controls:
-    #   formula:
+  - name: Amazon S3
+    currency: $
+    params:
+      - storage_per_gb_1tb: 0.03
+        storage_per_gb_50tb: 0.0295
+        storage_per_gb_500tb: 0.029
+        storage_per_gb_over500tb: 0.0285
+    controls:
+      - label: Standard Storage
+        name: storage_value
+        tooltip: Amount of standard file storage you need.
+        units: GB
+    formula: >
+      if (storage_value <= 1024) {
+        storage_per_gb_1tb * storage_value
+      } else if (storage_value > 1024 && storage_value <= 50 * 1024) {
+        storage_per_gb_50tb * storage_value
+      } else if (storage_value > 50 * 1024 && storage_value <= 500 * 1024) {
+        storage_per_gb_500tb * storage_value
+      } else {
+        storage_per_gb_over500tb * storage_value
+      }

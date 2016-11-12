@@ -119,60 +119,21 @@ $(document).ready(function() {
                 }));
             }, me);
 
-            // Render all controls of a currently selected provider
-            var controlsView = new ControlsView({
-                model: providers.models[0]
-            });
+            // // Render all controls of a currently selected provider
+            me.renderControls(providers.models[0]);
+
+            return me;
+        },
+
+        renderControls: function(provider) {
+            var controlsView = new ControlsView({model: provider});
             controlsView.render();
 
             // Initialize tooltips
             $('[data-toggle="tooltip"]').tooltip();
 
             // Show Calculate button
-            me.$calculatorControls.append(me.calculateButtonTemplate());
-
-            return me;
-        },
-
-        isValid: function(controls) {
-            var me = this,
-                valid = false;
-
-            controls.each(function(control) {
-                var model = control.toJSON(),
-                    $item = $('#' + model.name),
-                    $controlContainer = $item.parent().parent(),
-                    value = $item.val();
-
-                if (value !== '') {
-                    if (me.isNumber(value)) {
-                        valid = true;
-                    } else {
-                        // Mark invalid (only number is allowed)
-                        $controlContainer.toggleClass('has-error', true);
-                        $controlContainer.append($('<span/>', {
-                            class: 'help-block',
-                            text: 'Only integers and decimals are allowed.'
-                        }));
-                        valid = false;
-                    }
-                } else {
-                    // Mark invalid (cannot be empty)
-                    $controlContainer.toggleClass('has-error', true);
-                    $controlContainer.append($('<span/>', {
-                        class: 'help-block',
-                        text: 'This field cannot be empty.'
-                    }));
-                    valid = false;
-                }
-            });
-
-            return valid;
-        },
-
-        isNumber: function(value) {
-            var pattern = new RegExp(/^[0-9]+([.,][0-9]+)?$/);
-            return pattern.test(value);
+            this.$calculatorControls.append(this.calculateButtonTemplate());
         },
 
         onCalculateBtnClick: function() {
@@ -186,6 +147,15 @@ $(document).ready(function() {
             }
         },
 
+        onProviderChange: function(e) {
+            var providerValue = e.target.value,
+                provider = this.providerCollection.where({value: providerValue})[0];
+
+            this.$calculatorControls.empty();
+            this.$calculatorTotalPrice.hide();
+            this.renderControls(provider);
+        },
+
         renderTotalPrice: function(provider) {
             var me = this,
                 providerModel = provider.toJSON(),
@@ -193,7 +163,7 @@ $(document).ready(function() {
 
             // Replace all param values in the formula
             _.each(providerModel.params, function(value, name) {
-                formula = formula.replace(name, value);
+                formula = formula.replace(new RegExp(name, 'g'), value);
             });
 
             // // Replace all input values in the formula
@@ -204,7 +174,7 @@ $(document).ready(function() {
                     $controlContainer = $item.parent().parent(),
                     $errorMsg = $controlContainer.children('.help-block');
 
-                formula = formula.replace(name, value);
+                formula = formula.replace(new RegExp(name, 'g'), value);
 
                 // Clear error message
                 $controlContainer.toggleClass('has-error', false);
@@ -223,14 +193,50 @@ $(document).ready(function() {
             me.$calculatorTotalPrice.show();
         },
 
-        onProviderChange: function(e) {
-            var providerValue = e.target.value,
-                provider = this.providerCollection.where({value: providerValue})[0];
+        isNumber: function(value) {
+            var pattern = new RegExp(/^[0-9]+([.,][0-9]+)?$/);
+            return pattern.test(value);
+        },
 
-            this.$calculatorControls.empty();
-            this.$calculatorTotalPrice.empty();
-            this.renderControls(provider);
-            this.renderTotalPrice(provider);
+        isValid: function(controls) {
+            var me = this,
+                valid = false;
+
+            controls.each(function(control) {
+                var model = control.toJSON(),
+                    $item = $('#' + model.name),
+                    $controlContainer = $item.parent().parent(),
+                    value = $item.val();
+
+                if (value !== '') {
+                    if (me.isNumber(value)) {
+                        valid = true;
+                    } else {
+                        // Mark invalid (only number is allowed)
+                        me.showErrorMsg($controlContainer, 'Only integers and decimals are allowed.');
+                        valid = false;
+                        me.$calculatorTotalPrice.hide();
+                    }
+                } else {
+                    // Mark invalid (cannot be empty)
+                    me.showErrorMsg($controlContainer, 'This field cannot be empty.');
+                    valid = false;
+                    me.$calculatorTotalPrice.hide();
+                }
+            });
+
+            return valid;
+        },
+
+        showErrorMsg: function($parent, msg) {
+            $parent.toggleClass('has-error', true);
+
+            var $errorMsg = $parent.children('.help-block');
+            if ($errorMsg.length === 0) {
+                $parent.append($('<span/>', {class: 'help-block', text: msg}));
+            } else {
+                $errorMsg.text(msg);
+            }
         }
     });
 
