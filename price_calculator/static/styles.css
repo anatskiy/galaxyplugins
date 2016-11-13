@@ -40,7 +40,7 @@
 }
 
 #calculateBtn {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 #calculateBtn:focus {
@@ -52,7 +52,7 @@
     background: #009688;
     font-size: 16px;
     margin-bottom: -10px;
-    padding: 5px 0 15px;
+    padding: 15px 0 25px;
 }
 
 .total-price {
@@ -65,6 +65,16 @@
     color: #b2dfdb;
     font-weight: 300;
     margin-left: -3px;
+}
+
+#amazon-total-price {
+    color: #b2dfdb;
+    font-weight: 300;
+    font-size: 14px;
+}
+
+.load-error {
+    padding: 17px;
 }
 
 #price_calculator-loader {

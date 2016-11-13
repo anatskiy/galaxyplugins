@@ -67,10 +67,9 @@ $(document).ready(function() {
         ].join('')),
 
         totalPriceTemplate: _.template([
-            '<p>Total Price: ',
-                '<span class="total-price"><%= price %> </span>',
-                '<span class="total-price-currency"><%= currency %>/month</span>',
-            '</p>'
+            'Total Price: ',
+            '<span class="total-price"><%= price %> </span>',
+            '<span class="total-price-currency"><%= currency %>/month</span>',
         ].join('')),
 
         events: {
@@ -93,18 +92,58 @@ $(document).ready(function() {
             me.$calculatorTotalPrice.hide();
 
             // Get all information about providers
-            me.providerCollection.fetch({
-                success: function(providers) {
-                    providers.each(function(provider) {
-                        provider.attributes._controls.add(provider.attributes.controls);
-                        provider.unset('controls');
-                    });
+            $.get({
+                url: 'api/webhooks/price_calculator/get_data',
+                success: function(data) {
+                    if (data.providers.length > 0) {
+                        me.totalDataSize = data.size;
+                        me.providerCollection.add(data.providers);
 
-                    me.$calculatorProviders.show();
-                    me.$loader.remove();
-                    me.render(providers);
+                        me.showAmazonTotalPrice();
+
+                        me.providerCollection.each(function(provider) {
+                            provider.attributes._controls.add(provider.attributes.controls);
+                            provider.unset('controls');
+                        });
+
+                        me.$calculatorProviders.show();
+                        me.$loader.remove();
+                        me.render(me.providerCollection);
+                    } else {
+                        me.$loader.remove();
+                        me.$calculatorControls.append($('<div/>', {
+                            class: 'load-error',
+                            text: 'Couldn\'t load providers (see logs).'
+                        }));
+                    }
                 }
             });
+        },
+
+        showAmazonTotalPrice: function() {
+            var amazon = this.providerCollection.where({name: 'Amazon S3'})[0].toJSON(),
+                amazonFormula = amazon.formula;
+
+            // Replace all param values in the formula
+            _.each(amazon.params, function(value, name) {
+                amazonFormula = amazonFormula.replace(new RegExp(name, 'g'), value);
+            });
+
+            // Replace storage size value with real value
+            amazonFormula = amazonFormula.replace(
+                new RegExp('storage_value', 'g'), this.totalDataSize
+            );
+
+            // Show Amazon Total Price
+            var amazonTotalPrice = eval(amazonFormula);  // jshint ignore:line
+            $('#price_calculator-header').append(
+                $('<span/>', {
+                    id: 'amazon-total-price',
+                    text: 'You\'re using ' + this.totalDataSize + ' GB of data, ' +
+                          'this would cost you ' + amazonTotalPrice.toFixed(2) + ' ' +
+                          amazon.currency + '/month on Amazon S3'
+                })
+            );
         },
 
         render: function(providers) {
@@ -134,6 +173,15 @@ $(document).ready(function() {
 
             // Show Calculate button
             this.$calculatorControls.append(this.calculateButtonTemplate());
+
+            // Set Standard Storage value based on user data usage
+            $('#storage_value').val(this.totalDataSize);
+
+            // If a provider has only one control (Standard Storage),
+            // calculate the price immediately
+            if (provider.attributes._controls.length == 1) {
+                $('#calculateBtn').click()
+            }
         },
 
         onCalculateBtnClick: function() {
@@ -157,8 +205,7 @@ $(document).ready(function() {
         },
 
         renderTotalPrice: function(provider) {
-            var me = this,
-                providerModel = provider.toJSON(),
+            var providerModel = provider.toJSON(),
                 formula = providerModel.formula;
 
             // Replace all param values in the formula
@@ -183,14 +230,15 @@ $(document).ready(function() {
                 }
             });
 
+            // Evaluate the formula
             var totalPrice = eval(formula);  // jshint ignore:line
-            me.$calculatorTotalPrice.html(me.totalPriceTemplate({
+            this.$calculatorTotalPrice.html(this.totalPriceTemplate({
                 price: totalPrice.toFixed(2),
                 currency: providerModel.currency
             }));
 
             // Show Total Price
-            me.$calculatorTotalPrice.show();
+            this.$calculatorTotalPrice.show();
         },
 
         isNumber: function(value) {

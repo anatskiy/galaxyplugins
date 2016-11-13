@@ -17,11 +17,14 @@ def get_data(name='get_data', methods=['GET']):
         config = yaml.load(f)
 
     # Main code
-    data = []
+    data = {
+        'size': 5000,
+        'providers': []
+    }
 
     try:
         for provider in config['providers']:
-            data.append({
+            data['providers'].append({
                 'name': provider['name'],
                 'currency': provider['currency'],
                 'value': provider['name'].lower().replace(' ', '_'),
