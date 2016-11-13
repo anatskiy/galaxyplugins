@@ -180,7 +180,7 @@ $(document).ready(function() {
             // If a provider has only one control (Standard Storage),
             // calculate the price immediately
             if (provider.attributes._controls.length == 1) {
-                $('#calculateBtn').click()
+                $('#calculateBtn').click();
             }
         },
 
