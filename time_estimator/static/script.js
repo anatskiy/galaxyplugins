@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
     // Third-party dependencies
-    // $('<script/>', {src: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js'}).appendTo('head');
+    // $('<script/>', {src: 'https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js'}).appendTo('head');
 
     var TimeEstimatorAppView = Backbone.View.extend({
         el: $('#time_estimator'),
@@ -11,7 +11,7 @@ $(document).ready(function() {
                 '<h4>Time Estimator</h4>',
             '</div>',
             '<div id="time_estimator-body">',
-                '<canvas id="chart" width="400" height="400"></canvas>',
+                '<div id="chart" style="height: 400px; width: 100%;"></div>',
             '</div>',
             '<div id="time_estimator-loader"></div>'
         ].join('')),
@@ -21,6 +21,8 @@ $(document).ready(function() {
                 toolId = this.$el.parent().attr('tool-id'),
                 params = JSON.stringify({tool_id: toolId});
 
+            // me.toolId = toolId;
+            me.toolId = 'Cut1';  // temporary
             me.$el.html(this.appTemplate());
             me.$body = $('#time_estimator-body');
             me.$chart = $('#chart');
@@ -30,7 +32,7 @@ $(document).ready(function() {
                 me.$loader.remove();
 
                 if (data.data.length > 0) {
-                    me.render(data.labels, data.data, data.averageLine);
+                    me.render(data.data, data.units);
                 } else {
                     me.$body.append($('<div/>', {
                         class: 'load-error',
@@ -40,82 +42,32 @@ $(document).ready(function() {
             });
         },
 
-        render: function(labels, data, averageLine) {
-            this.$chart.show();
+        render: function(data, units) {
+            var me = this;
 
-            var chart = new Chart(this.$chart, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            fill: false,
-                            backgroundColor: "rgba(75,192,192,0.4)",
-                            borderColor: "rgba(75,192,192,1)",
-                            borderCapStyle: 'butt',
-                            borderDash: [],
-                            borderDashOffset: 0.0,
-                            borderJoinStyle: 'miter',
-                            pointBorderColor: "rgba(75,192,192,1)",
-                            pointBackgroundColor: "#fff",
-                            pointBorderWidth: 1,
-                            pointHoverRadius: 5,
-                            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                            pointHoverBorderColor: "rgba(220,220,220,1)",
-                            pointHoverBorderWidth: 2,
-                            pointRadius: 1,
-                            pointHitRadius: 3,
-                            data: data,
-                            spanGaps: false
-                        },
-                        {
-                            lineTension: 0,
-                            fill: false,
-                            backgroundColor: "rgba(158,158,158,0.8)",
-                            borderColor: "rgba(158,158,158,0.8)",
-                            borderWidth: 2,
-                            borderCapStyle: 'butt',
-                            borderDash: [],
-                            borderDashOffset: 0.0,
-                            borderJoinStyle: 'miter',
-                            pointBorderWidth: 1,
-                            pointHoverRadius: 3,
-                            pointHitRadius: 3,
-                            pointRadius: 0,
-                            data: averageLine,
-                            spanGaps: false
-                        }
-                    ]
+            me.$chart.show();
+
+            var chart = new CanvasJS.Chart('chart', {
+                animationEnabled: true,
+                zoomEnabled: true,
+                title:{
+                    text: 'Observed runtime of tool ' + me.toolId,
+                    fontSize: 16
                 },
-                options: {
-                    title: {
-                        display: true,
-                        text: 'Runtime (in seconds)'
-                    },
-                    scales: {
-                        xAxes: [{
-                            display: false
-                        }],
-                        yAxes: [{
-                            display: true,
-                            scaleLabel: {
-                                display: true,
-                                labelString: 't, sec'
-                            },
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }]
-                    },
-                    legend: {
-                        display: false
-                    },
-                    tooltips: {
-                        enabled: false
+                data: [
+                    {
+                        type: 'spline',
+                        dataPoints: data
                     }
+                ],
+                axisY: {
+                    title : 't, ' + units,
+                    titleFontSize: 18,
+                    // interval: 1
                 }
             });
+
+            chart.render();
 
             return this;
         }
